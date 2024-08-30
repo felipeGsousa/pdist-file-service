@@ -8,9 +8,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsResource;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,15 +25,39 @@ public class FileService {
     public String storeFile (String userId, MultipartFile file) throws IOException {
         Document metadata = new Document();
         metadata.put("userId", userId);
-        return gridFsTemplate.store(file.getInputStream(), file.getOriginalFilename(), file.getContentType(),metadata).toString();
+        return gridFsTemplate.store(file.getInputStream(), file.getOriginalFilename(), file.getContentType(), metadata).toString();
     }
 
-    public GridFsResource getFile (String id) {
+    public GridFsResource getFileResource (String id) {
         GridFSFile gridFSFile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(id)));
         if (gridFSFile != null) {
             return gridFsTemplate.getResource(gridFSFile);
         }
         return null;
+    }
+
+    public ResponseEntity<?> getFile (String id) {
+        GridFSFile gridFSFile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(id)));
+
+        if (gridFSFile != null) {
+            GridFsResource resource = gridFsTemplate.getResource(gridFSFile);
+            try {
+                Document metadata = gridFSFile.getMetadata();
+                String contentType = "application/octet-stream";
+
+                if (metadata != null && metadata.getString("contentType") != null) {
+                    contentType = metadata.getString("contentType");
+                }
+
+                return ResponseEntity.ok()
+                        .contentType(MediaType.parseMediaType(contentType))
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                        .body(resource.getInputStream().readAllBytes());
+            } catch (IOException e) {
+                return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        return new ResponseEntity<>("File not found", HttpStatus.NOT_FOUND);
     }
 
     public ResponseEntity<?> getAllFiles() {

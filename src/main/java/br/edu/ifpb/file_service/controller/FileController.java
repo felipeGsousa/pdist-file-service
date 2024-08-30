@@ -34,7 +34,7 @@ public class FileController {
         }
     }
 
-    @GetMapping("/get/{id}")
+    /*@GetMapping("/get/{id}")
     public ResponseEntity<?> getFile(@PathVariable String id) {
         GridFsResource resource = fileService.getFile(id);
 
@@ -48,12 +48,17 @@ public class FileController {
             }
         }
         return ResponseEntity.notFound().build();
+    }*/
+
+    @GetMapping("/get/{id}")
+    public ResponseEntity<?> getFile(@PathVariable String id) {
+       return fileService.getFile(id);
     }
 
     @GetMapping("/download/{id}")
     public ResponseEntity<?> downloadFile (@PathVariable String id) {
         try {
-            GridFsResource resource = fileService.getFile(id);
+            GridFsResource resource = fileService.getFileResource(id);
             if (resource != null) {
                 HttpHeaders headers = new HttpHeaders();
                 headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + resource.getFilename());

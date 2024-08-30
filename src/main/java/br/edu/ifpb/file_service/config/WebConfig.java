@@ -11,7 +11,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://pdist-front.vercel.app/", "https://pdist-front-felipes-projects-ed3c083c.vercel.app/", "https://pdist-front-git-main-felipes-projects-ed3c083c.vercel.app/") // Substitua pela URL do seu frontend
+                .allowedOrigins("http://localhost:4200/","https://pdist-front.vercel.app/", "https://pdist-front-felipes-projects-ed3c083c.vercel.app/", "https://pdist-front-git-main-felipes-projects-ed3c083c.vercel.app/") // Substitua pela URL do seu frontend
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowedHeaders("*");
     }
@@ -20,7 +20,7 @@ public class WebConfig implements WebMvcConfigurer {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins("https://pdist-front.vercel.app/", "https://pdist-front-felipes-projects-ed3c083c.vercel.app/", "https://pdist-front-git-main-felipes-projects-ed3c083c.vercel.app/"); // Ajuste a URL conforme necessário
+                registry.addMapping("/**").allowedOrigins("http://localhost:4200/","https://pdist-front.vercel.app/", "https://pdist-front-felipes-projects-ed3c083c.vercel.app/", "https://pdist-front-git-main-felipes-projects-ed3c083c.vercel.app/"); // Ajuste a URL conforme necessário
             }
         };
     }

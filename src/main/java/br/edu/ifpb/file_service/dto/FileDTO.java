@@ -1,12 +1,13 @@
 package br.edu.ifpb.file_service.dto;
 
-public class FileDto {
+public class FileDTO {
     private String id;
     private String filename;
     private String contentType;
-    private long length;
+    private byte[] data;
+    private String userId;
 
-    public FileDto() {
+    public FileDTO() {
     }
 
     public String getId() {
@@ -33,11 +34,19 @@ public class FileDto {
         this.contentType = contentType;
     }
 
-    public long getLength() {
-        return length;
+    public byte[] getData() {
+        return data;
     }
 
-    public void setLength(long length) {
-        this.length = length;
+    public void setData(byte[] data) {
+        this.data = data;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

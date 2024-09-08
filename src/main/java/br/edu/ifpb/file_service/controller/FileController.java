@@ -1,21 +1,17 @@
 package br.edu.ifpb.file_service.controller;
 
-import br.edu.ifpb.file_service.dto.FileDto;
+import br.edu.ifpb.file_service.dto.FileDTO;
 import br.edu.ifpb.file_service.service.FileService;
-import com.mongodb.client.gridfs.model.GridFSFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.mongodb.gridfs.GridFsResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/files")
@@ -52,7 +48,12 @@ public class FileController {
 
     @GetMapping("/get/{id}")
     public ResponseEntity<?> getFile(@PathVariable String id) {
-       return fileService.getFile(id);
+        try {
+            FileDTO fileDto = fileService.getFile(id);
+            return new ResponseEntity<>(fileDto, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/download/{id}")

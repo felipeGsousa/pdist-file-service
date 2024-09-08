@@ -1,0 +1,36 @@
+package br.edu.ifpb.file_service.config;
+
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class RabbitMQConfig {
+
+    @Value(value = "${broker.queue.post.file}")
+    private String postFileQueue;
+
+    @Value(value = "${broker.queue.file.post}")
+    private String filePostQueue;
+
+    @Bean
+    public Queue postFileQueue() {
+        return new Queue(postFileQueue, true);
+    }
+
+    @Bean
+    public Queue filePostQueue() {
+        return new Queue(filePostQueue, true);
+    }
+
+    @Bean
+    public Jackson2JsonMessageConverter messageConverter() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return new Jackson2JsonMessageConverter(objectMapper);
+    }
+
+}

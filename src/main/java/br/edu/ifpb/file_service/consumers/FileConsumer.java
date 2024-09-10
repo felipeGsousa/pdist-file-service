@@ -20,6 +20,7 @@ public class FileConsumer {
     private FileService fileService;
     @RabbitListener(queues = "${broker.queue.post.file}", containerFactory = "myRabbitListenerContainerFactory")
     public String listenFileQueue(@Payload FileDTO fileDto) throws IOException {
+        System.out.println("postFile");
         MultipartFile file = new CustomMultipartFile(fileDto.getData(), fileDto.getFilename(), fileDto.getContentType());
         String fileId = fileService.storeFile(fileDto.getUserId(), file);
         return fileId;

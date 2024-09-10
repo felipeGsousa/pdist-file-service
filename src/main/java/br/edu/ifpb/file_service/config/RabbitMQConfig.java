@@ -2,6 +2,7 @@ package br.edu.ifpb.file_service.config;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -44,7 +45,11 @@ public class RabbitMQConfig {
         configurer.configure(factory, connectionFactory);
         factory.setConcurrentConsumers(8);
         factory.setMaxConcurrentConsumers(16);
-        factory.setPrefetchCount(3);
+
+        factory.setAcknowledgeMode(AcknowledgeMode.MANUAL);
+        factory.setBatchSize(65000);
+
+        factory.setPrefetchCount(50);
         return factory;
     }
 }

@@ -29,16 +29,14 @@ public class FileConsumer {
     public Map<String, Object> listenPostQueue(@Payload String fileId) {
         FileDTO fileDTO = fileService.getFile(fileId);
         Map<String, Object> fileDtoMap = new HashMap<>();
-        if (fileDTO != null) {
-            fileDtoMap.put("data", fileDTO.getData());
-            fileDtoMap.put("contentType", fileDTO.getContentType());
-            fileDtoMap.put("filename", fileDTO.getFilename());
-            fileDtoMap.put("id", fileDTO.getId());
-            fileDtoMap.put("userId", fileDTO.getUserId());
-            fileDtoMap.put("response", true);
-        } else {
-            fileDtoMap.put("response", false);
-        }
+
+        fileDtoMap.put("data", fileDTO.getData());
+        fileDtoMap.put("contentType", fileDTO.getContentType());
+        fileDtoMap.put("filename", fileDTO.getFilename());
+        fileDtoMap.put("id", fileDTO.getId());
+        fileDtoMap.put("userId", fileDTO.getUserId());
+        fileDtoMap.put("response", true);
+
         return fileDtoMap;
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsResource;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,10 +22,25 @@ public class FileService {
     @Autowired
     private GridFsTemplate gridFsTemplate;
 
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
+
     public String storeFile (String userId, MultipartFile file) throws IOException {
         Document metadata = new Document();
         metadata.put("userId", userId);
-        return gridFsTemplate.store(file.getInputStream(), file.getOriginalFilename(), file.getContentType(), metadata).toString();
+        String fileId = gridFsTemplate.store(file.getInputStream(), file.getOriginalFilename(), file.getContentType(), metadata).toString();
+
+        HashMap<String, Object> fileCache = new HashMap<>();
+
+        fileCache.put("data", file.getInputStream().readAllBytes());
+        fileCache.put("contentType", file.getContentType());
+        fileCache.put("filename", file.getOriginalFilename());
+        fileCache.put("id", fileId);
+        fileCache.put("userId", userId);
+
+        redisTemplate.opsForHash().putAll(fileId, fileCache);
+
+        return fileId;
     }
 
     public GridFsResource getFileResource (String id) {
@@ -115,6 +131,7 @@ public class FileService {
 
     public void deleteFile (String id) {
         gridFsTemplate.delete(new Query(Criteria.where("_id").is(id)));
+        redisTemplate.opsForHash().delete(id);
     }
 
     public List<FileDTO> fsToDto(List<GridFSFile> files) {

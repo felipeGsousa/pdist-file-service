@@ -5,6 +5,7 @@ import br.edu.ifpb.file_service.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.mongodb.gridfs.GridFsResource;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,9 @@ public class FileController {
 
     @Autowired
     private FileService fileService;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @PostMapping("/upload/{id}")
     public ResponseEntity<String> uploadFile(@PathVariable String id, @RequestParam("file") MultipartFile file) {
@@ -102,5 +106,11 @@ public class FileController {
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/test-redis")
+    public String testRedis() {
+        redisTemplate.opsForValue().set("testKey", "Hello Redis!");
+        return (String) redisTemplate.opsForValue().get("testKey");
     }
 }

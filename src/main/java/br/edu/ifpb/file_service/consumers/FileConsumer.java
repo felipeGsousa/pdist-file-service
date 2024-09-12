@@ -18,14 +18,13 @@ public class FileConsumer {
 
     @Autowired
     private FileService fileService;
-    @RabbitListener(queues = "${broker.queue.post.file}", containerFactory = "myRabbitListenerContainerFactory", concurrency = "5-10", ackMode = "MANUAL")
+    @RabbitListener(queues = "${broker.queue.post.file}", containerFactory = "myRabbitListenerContainerFactory", concurrency = "15-40")
     public String listenFileQueue(@Payload FileDTO fileDto) throws IOException {
-        System.out.println("postFile");
         MultipartFile file = new CustomMultipartFile(fileDto.getData(), fileDto.getFilename(), fileDto.getContentType());
         String fileId = fileService.storeFile(fileDto.getUserId(), file);
         return fileId;
     }
-    @RabbitListener(queues = "${broker.queue.file.post}", containerFactory = "myRabbitListenerContainerFactory", concurrency = "5-10", ackMode = "MANUAL")
+    @RabbitListener(queues = "${broker.queue.file.post}", containerFactory = "myRabbitListenerContainerFactory", concurrency = "15-40")
     public Map<String, Object> listenPostQueue(@Payload String fileId) {
         FileDTO fileDTO = fileService.getFile(fileId);
         Map<String, Object> fileDtoMap = new HashMap<>();
